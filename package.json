@@ -1,0 +1,43 @@
+{
+  "name": "an-quasar-utils",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "main": "./dist/an-utils.umd.cjs",
+  "types": "./dist/types/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "module": "./dist/an-utils.js",
+  "exports": {
+    ".": {
+      "import": "./dist/an-utils.js",
+      "require": "./dist/an-utils.umd.cjs"
+    }
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build && yarn build:types",
+    "build:types": "vue-tsc --project tsconfig.build-types.json --declaration --emitDeclarationOnly --outDir dist/types ",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "axios": "^1.7.7",
+    "vue": "^3.4.37"
+  },
+  "devDependencies": {
+    "@quasar/extras": "^1.16.12",
+    "@quasar/vite-plugin": "^1.7.0",
+    "@vitejs/plugin-vue": "^5.1.2",
+    "autoprefixer": "^10.4.20",
+    "postcss": "^8.4.47",
+    "quasar": "^2.16.11",
+    "rollup-plugin-postcss": "^4.0.2",
+    "sass": "^1.33.0",
+    "tailwindcss": "^3.4.11",
+    "typescript": "^5.5.3",
+    "vite": "^5.4.1",
+    "vite-plugin-css-injected-by-js": "^3.5.1",
+    "vue-tsc": "^2.0.29"
+  }
+}
