@@ -16,7 +16,7 @@ export const objectToQueryString = (obj?: Record<string, any>): string => {
           params.push(nestedParams);
         } else {
           params.push(
-            `${encodeURIComponent(key)}=${encodeURIComponent(value)}`
+            `${key}=${value}`
           );
         }
       }

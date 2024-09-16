@@ -1,7 +1,7 @@
 <template>
     <div class="flex flex-col flex-nowrap gap-2 w-full">
         <q-table :loading="props.loading || data.tableIsLoading" :hide-bottom="props.hidePagination" :flat="props.flat"
-            :square="props.square" :title="props.title" :columns="props.columns" :rows="data.rows.results"
+            :square="props.square" :title="props.title" :columns="props.columns" :rows="(data.rows[props.paginationResponseKeys.results] as unknown as any[])"
             v-model:pagination="data.pagination" @request="onRequest" wrap-cells class="w-full"
             v-bind="{ onRowClick: props.enableRowClick ? (_evt, row, index) => { emit('rowClick', row, index) } : undefined, }">
             <template v-if="props.hasSearch" #top>
@@ -21,7 +21,7 @@
             </template>
             <template #bottom>
                 <div class=" w-full flex justify-center items-center">
-                    <q-pagination v-model="data.pagination.page" :max-pages="6" :max="data.rows.lastPage"
+                    <q-pagination v-model="data.pagination.page" :max-pages="6" :max="(data.rows[props.paginationResponseKeys.lastPage] as unknown as number)"
                         @update:model-value="fetchData" direction-links boundary-links />
                 </div>
             </template>
@@ -30,11 +30,10 @@
             </template>
         </q-table>
     </div>
-    <AnModalForm ref="filterModal" :ok-label="props.filterModalData.okLabel || 'Filter'"
-        :title="props.filterModalData.title || 'Filter'" @submit="onFilter" :form-is-loading="data.filterIsLoading">
+    <AnModalForm ref="filterModal" v-bind="props.filterModalData.props" :ok-label="props.filterModalData.props?.okLabel || 'Filter'"
+        :title="props.filterModalData.props?.title || 'Filter'" @submit="onFilter" :form-is-loading="data.filterIsLoading">
         <template #content>
             <template v-for="(field, index) in props.filterModalData.fields" :key="index">
-                <div>{{ data.filter[field.urlParam] }}</div>
                 <template v-if="field.type == 'text'">
                     <q-input outlined :label="field.label" v-model="data.filter[field.urlParam]" clearable />
                 </template>
@@ -151,15 +150,12 @@
 
 import { QTableColumn, QTableSlots } from 'quasar';
 import { onBeforeMount, reactive, ref } from 'vue';
-import { objectToQueryString } from './functions';
 import AnModalForm from './AnModalForm.vue';
 import axios, { AxiosInstance } from 'axios';
 
 type Paginated<T = any> = {
     count: number;
     lastPage: number;
-    countItemsOnPage: number;
-    current: number;
     next: string | null;
     previous: string | null;
     results: T[];
@@ -170,7 +166,7 @@ type Filter = {
 }
 type Pagination = { page?: number, page_size?: number }
 
-type FilterModalData = {
+export type FilterModalData = {
     fields: {
         type: 'boolean-checkbox'
         | 'checkboxs'
@@ -190,8 +186,7 @@ type FilterModalData = {
             value: string | number | any;
         }[];
     }[];
-    title?: string;
-    okLabel?: string;
+    props?:InstanceType<typeof AnModalForm>['$props']
 }
 
 const filterModal = ref<InstanceType<typeof AnModalForm>>();
@@ -259,9 +254,25 @@ const props = defineProps({
     axiosInterceptor: {
         type: Object as () => AxiosInstance,
         required: false
+    },
+    paginationResponseKeys:{
+        type: Object as ()=> {[K in keyof Paginated]:string},
+        default: {
+            count:"count",
+            lastPage:"lastPage",
+            next:"next",
+            previous:"previous",
+            results:"results",
+        } as {[K in keyof Paginated]:string}
+    },
+    orderingKey:{
+        type:String,
+        default:"ordering",
     }
 })
 
+// const _s = defineSlots<Omit<QTableSlots,keyof {"top":any,"top-left":any,"top-right":any}>>()
+// const slots = Object.keys(_s).filter(k=>!["top","top-left","top-right"].includes(k)).map(k=>_s[k as keyof typeof _s])
 const slots = defineSlots<QTableSlots>()
 
 const defaultPagination = {
@@ -276,8 +287,8 @@ const data = reactive({
     dataIsLoading: false,
     tableIsLoading: false,
     rows: {
-        results: [] as any[]
-    } as Paginated,
+        [props.paginationResponseKeys.results]: [] as any[]
+    },
     pagination: defaultPagination,
     filter: {} as Filter,
     ordering: undefined as string | undefined,
@@ -287,11 +298,13 @@ const data = reactive({
 })
 
 const fetchData = async () => {
+    console.log(data.filter);
+    
     if (props.link) {
         data.ordering = getOrderingText()
         data.tableIsLoading = true
         await apiGetData({ pagination: { page: data.pagination.page }, filter: data.filter, ordering: data.ordering, search: data.search }).then(res => {
-            data.rows = res.data
+            data.rows = res.data as any
             emit('getDataSuccessfuly', res.data)
         })
             .catch(error => {
@@ -355,12 +368,36 @@ onBeforeMount(() => {
 })
 
 const apiGetData = (data?: { pagination?: Pagination, filter?: Filter, ordering?: string, search: string }) => {
-    return (props.axiosInterceptor || axios).get<Paginated>(`${props.link}?${objectToQueryString(props.linkParams)}&${objectToQueryString(data)}`)
+    
+    return (props.axiosInterceptor || axios).get<Paginated>(props.link,{
+        params:{
+            ...data?.pagination,
+            ...data?.filter,
+            [props.orderingKey] : data?.ordering,
+            ...props.linkParams
+        }
+    })
 }
 
 const filter = (dataFilter: Filter) => {
-    data.filter = dataFilter;
-    return fetchData()
+
+    let filter = {} as Filter
+
+    Object.keys(dataFilter).forEach((key)=>{
+        filter[key] = dataFilter[key].toString()
+        // const field = props.filterModalData.fields.find(i=>i.urlParam === key)
+        // if(field){
+        //     if(field.type === 'checkboxs' || field.type === 'select-multiple'){
+                
+        //     }
+        // }else{
+        //     filter[key] = dataFilter[key]
+        // }
+    })
+    data.filter = filter;
+    return fetchData().finally(()=>{
+        data.filter = dataFilter
+    })
 }
 
 defineExpose({ filter, fetchData })
