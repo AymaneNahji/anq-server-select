@@ -1,9 +1,11 @@
 <template>
     <q-dialog v-model="data.open" :persistent="props.persistent" @hide="hide">
-        <q-card class=" container ">
+        <q-card v-bind="props.modalCardProps" :class="`container ${props.modalCardProps?.class || ''}`">
             <q-card-section class="flex items-center justify-between">
                 <h2 class="font-bold text-2xl">{{ props.title }}</h2>
-                <q-btn icon="close" :color="props.btnsColor" round flat v-close-popup :disable="props.persistent" />
+                <slot name="closeIconBtn" :color="props.btnsColor" :disable="props.persistent">
+                    <q-btn icon="close" :color="props.btnsColor" round flat v-close-popup :disable="props.persistent" />
+                </slot>
             </q-card-section>
             <div class="flex flex-col">
                 <q-card-section class="flex flex-col gap-2">
@@ -11,8 +13,12 @@
                 </q-card-section>
                 <q-separator v-if="!hideActions" />
                 <q-card-section v-if="!hideActions" class="flex items-center justify-end gap-2" >
-                    <q-btn :color="props.btnsColor" type="button" unelevated flat class="border border-solid" :disable="props.persistent" :label="props.cancelLabel" no-caps v-close-popup />
-                    <q-btn v-if="!hideOkBtn" @click="emit('okClick')" :color="props.btnsColor" type="button" unelevated :label="props.okLabel" no-caps/>
+                    <slot name="cancelBtn" :color="props.btnsColor" :disable="props.persistent" :label="props.cancelLabel">
+                        <q-btn :color="props.btnsColor" type="button" unelevated flat class="border border-solid" :disable="props.persistent" :label="props.cancelLabel" no-caps v-close-popup />
+                    </slot>
+                    <slot name="okBtn" :click="()=>emit('okClick')" :color="props.btnsColor" :label="props.cancelLabel">
+                        <q-btn v-if="!hideOkBtn" @click="emit('okClick')" :color="props.btnsColor" type="button" unelevated :label="props.okLabel" no-caps/>
+                    </slot>
                 </q-card-section>
             </div>
         </q-card>
@@ -20,7 +26,7 @@
 </template>
 
 <script setup lang="ts">
-import { QBtnProps } from 'quasar';
+import { QBtnProps, QCard } from 'quasar';
 import { reactive } from 'vue';
 
 const emit = defineEmits<{
@@ -56,6 +62,10 @@ const props = defineProps({
     btnsColor:{
         type: Object as ()=> QBtnProps['color'],
         default:'primary' as QBtnProps['color']
+    },
+    modalCardProps:{
+        type: Object as ()=>({class?:string;style?:string}&InstanceType<typeof QCard>['$props']),
+        required: false,
     }
 })
 

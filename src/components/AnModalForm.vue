@@ -1,9 +1,11 @@
 <template>
     <q-dialog v-model="data.open" :persistent="props.isLoading || props.formIsLoading" @hide="hide">
-        <q-card class=" container ">
+        <q-card v-bind="props.modalCardProps" :class="`container ${props.modalCardProps?.class || ''}`">
             <q-card-section class="flex items-center justify-between">
                 <h2 class="font-bold text-2xl">{{ props.title }}</h2>
-                <q-btn icon="close" :color="props.btnsColor" round flat v-close-popup :disable="props.isLoading || props.formIsLoading" />
+                <slot name="closeIconBtn" :color="props.btnsColor" :disable="props.isLoading || props.formIsLoading">
+                    <q-btn icon="close" :color="props.btnsColor" round flat v-close-popup :disable="props.isLoading || props.formIsLoading" />
+                </slot>
             </q-card-section>
             <q-form @submit="e=>emit('submit',e)" class="flex flex-col">
                 <q-card-section class="flex flex-col gap-2">
@@ -11,8 +13,12 @@
                 </q-card-section>
                 <q-separator />
                 <q-card-section class="flex items-center justify-end gap-2" >
-                    <q-btn :color="props.btnsColor" type="button" unelevated flat class="border border-solid" :disable="props.isLoading || props.formIsLoading" :label="props.cancelLabel" no-caps v-close-popup />
-                    <q-btn :color="props.btnsColor" type="submit" unelevated :label="props.okLabel" no-caps :disable="props.isLoading" :loading="props.formIsLoading" />
+                    <slot name="cancelBtn" :color="props.btnsColor" :disable="props.isLoading || props.formIsLoading" :label="props.cancelLabel">
+                        <q-btn :color="props.btnsColor" type="button" unelevated flat class="border border-solid" :disable="props.isLoading || props.formIsLoading" :label="props.cancelLabel" no-caps v-close-popup />
+                    </slot>
+                    <slot name="okBtn" :color="props.btnsColor" :label="props.okLabel" :disable="props.isLoading" :loading="props.formIsLoading">
+                        <q-btn :color="props.btnsColor" type="submit" unelevated :label="props.okLabel" no-caps :disable="props.isLoading" :loading="props.formIsLoading" />
+                    </slot>
                 </q-card-section>
             </q-form>
         </q-card>
@@ -20,7 +26,7 @@
 </template>
 
 <script setup lang="ts">
-import { QBtnProps } from 'quasar';
+import { QBtnProps, QCard } from 'quasar';
 import { reactive } from 'vue';
 
 const emit = defineEmits<{
@@ -52,6 +58,10 @@ const props = defineProps({
     btnsColor:{
         type: Object as ()=> QBtnProps['color'],
         default:'primary' as QBtnProps['color']
+    },
+    modalCardProps:{
+        type: Object as ()=>({class?:string;style?:string}&InstanceType<typeof QCard>['$props']),
+        required: false,
     }
 })
 
