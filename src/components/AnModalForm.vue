@@ -3,7 +3,7 @@
         <q-card v-bind="props.modalCardProps" :class="`container ${props.modalCardProps?.class || ''}`">
             <q-card-section class="flex items-center justify-between">
                 <h2 class="font-bold text-2xl">{{ props.title }}</h2>
-                <slot name="closeIconBtn" :color="props.btnsColor" :disable="props.isLoading || props.formIsLoading">
+                <slot name="close-icon-btn" :color="props.btnsColor" :disable="props.isLoading || props.formIsLoading">
                     <q-btn icon="close" :color="props.btnsColor" round flat v-close-popup :disable="props.isLoading || props.formIsLoading" />
                 </slot>
             </q-card-section>
@@ -13,10 +13,10 @@
                 </q-card-section>
                 <q-separator />
                 <q-card-section class="flex items-center justify-end gap-2" >
-                    <slot name="cancelBtn" :color="props.btnsColor" :disable="props.isLoading || props.formIsLoading" :label="props.cancelLabel">
+                    <slot name="cancel-btn" :color="props.btnsColor" :disable="props.isLoading || props.formIsLoading" :label="props.cancelLabel">
                         <q-btn :color="props.btnsColor" type="button" unelevated flat class="border border-solid" :disable="props.isLoading || props.formIsLoading" :label="props.cancelLabel" no-caps v-close-popup />
                     </slot>
-                    <slot name="okBtn" :color="props.btnsColor" :label="props.okLabel" :disable="props.isLoading" :loading="props.formIsLoading">
+                    <slot name="ok-btn" :color="props.btnsColor" :label="props.okLabel" :disable="props.isLoading" :loading="props.formIsLoading">
                         <q-btn :color="props.btnsColor" type="submit" unelevated :label="props.okLabel" no-caps :disable="props.isLoading" :loading="props.formIsLoading" />
                     </slot>
                 </q-card-section>

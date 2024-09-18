@@ -1,37 +1,53 @@
 <template>
     <div class="flex flex-col flex-nowrap gap-2 w-full">
+
         <q-table :loading="props.loading || data.tableIsLoading" :hide-bottom="props.hidePagination" :flat="props.flat"
-            :square="props.square" :title="props.title" :columns="props.columns" :rows="(data.rows[props.paginationResponseKeys.results] as unknown as any[])"
+            :square="props.square" :title="props.title" :columns="props.columns"
+            :rows="(data.rows[props.paginationResponseKeys.results] as unknown as any[])"
             v-model:pagination="data.pagination" @request="onRequest" wrap-cells class="w-full"
             v-bind="{ onRowClick: props.enableRowClick ? (_evt, row, index) => { emit('rowClick', row, index) } : undefined, }">
-            <template v-if="props.hasSearch" #top>
+            <template #top>
                 <div class="q-table__top relative-position row items-center w-full">
                     <div class="flex w-full items-center gap-2 justify-between">
                         <div class="q-table__title">
-                            {{ props.title }}
+                            <slot name="title">
+                                {{ props.title }}
+                            </slot>
                         </div>
                         <div class="flex items-center gap-2">
-                            <q-input label="Search" dense v-model="data.search" @update:model-value="onSearch" clearable
-                                :debounce="500" class="!items-start" outlined :loading="data.searchIsLoading" />
-                            <q-btn v-if="props.hasFilter" label="Filter" no-caps color="primary"
-                                @click="filterModal?.show()" />
+
+                            <template v-if="props.hasSearch">
+                                <slot name="search-input" :loading="data.searchIsLoading" :value="data.search" :search="(val:string)=>{data.search = val ; onSearch()}">
+                                    <q-input v-if="props.hasSearch" label="Search" dense v-model="data.search"
+                                        @update:model-value="onSearch" clearable :debounce="500" class="!items-start"
+                                        outlined :loading="data.searchIsLoading" />
+                                </slot>
+                            </template>
+                            <template v-if="props.hasFilter">
+                                <slot name="filter-btn" label="Filter" color="primary" :click="()=>filterModal?.show()">
+                                    <q-btn label="Filter" no-caps color="primary" @click="filterModal?.show()" />
+                                </slot>
+                            </template>
                         </div>
                     </div>
                 </div>
             </template>
             <template #bottom>
                 <div class=" w-full flex justify-center items-center">
-                    <q-pagination v-model="data.pagination.page" :max-pages="6" :max="(data.rows[props.paginationResponseKeys.lastPage] as unknown as number)"
+                    <q-pagination v-model="data.pagination.page" :max-pages="6"
+                        :max="(data.rows[props.paginationResponseKeys.lastPage] as unknown as number)"
                         @update:model-value="fetchData" direction-links boundary-links />
                 </div>
             </template>
             <template v-for="(_, name, index) in slots" #[name]="slotData" :key="index">
-                <slot :name="name" v-bind="(slotData as any)"></slot>
+                <slot v-if="!name.toString().startsWith('filter-modal-')" :name="(name as any)" v-bind="(slotData as any)">
+                </slot>
             </template>
         </q-table>
     </div>
-    <AnModalForm ref="filterModal" v-bind="props.filterModalData.props" :ok-label="props.filterModalData.props?.okLabel || 'Filter'"
-        :title="props.filterModalData.props?.title || 'Filter'" @submit="onFilter" :form-is-loading="data.filterIsLoading">
+    <AnModalForm ref="filterModal" v-bind="props.filterModalData.props"
+        :ok-label="props.filterModalData.props?.okLabel || 'Filter'" :title="props.filterModalData.props?.title || 'Filter'"
+        @submit="onFilter" :form-is-loading="data.filterIsLoading">
         <template #content>
             <template v-for="(field, index) in props.filterModalData.fields" :key="index">
                 <template v-if="field.type == 'text'">
@@ -142,6 +158,11 @@
                 </template>
             </template>
         </template>
+        <template v-for="(_, name, index) in slots" #[removeFilterModalSlotsPrefix(name.toString())]="slotData" :key="index">
+            <slot v-if="name.toString().startsWith('filter-modal-')" :name="name" v-bind="(slotData as any)"></slot>
+        </template>
+
+
     </AnModalForm>
 </template>
 
@@ -165,7 +186,22 @@ type Filter = {
     [key: string]: any
 }
 type Pagination = { page?: number, page_size?: number }
-
+type FilterModalSlots = InstanceType<typeof AnModalForm>['$slots']
+export type AnServerDataTableSlots = QTableSlots & {
+    [K in keyof FilterModalSlots as K extends "content" ? string : `filter-modal-${K}`]: FilterModalSlots[K]
+} & {
+    "title"?(_: {}): any;
+    "search-input"?(_: {
+        loading:boolean;
+        value:string;
+        search:(val:string)=>void;
+    }): any;
+    "filter-btn"?(_: {
+        label:string;
+        color:string;
+        click:()=>void;
+    }): any;
+}
 export type FilterModalData = {
     fields: {
         type: 'boolean-checkbox'
@@ -186,7 +222,7 @@ export type FilterModalData = {
             value: string | number | any;
         }[];
     }[];
-    props?:InstanceType<typeof AnModalForm>['$props']
+    props?: InstanceType<typeof AnModalForm>['$props']
 }
 
 const filterModal = ref<InstanceType<typeof AnModalForm>>();
@@ -255,25 +291,25 @@ const props = defineProps({
         type: Object as () => AxiosInstance,
         required: false
     },
-    paginationResponseKeys:{
-        type: Object as ()=> {[K in keyof Paginated]:string},
+    paginationResponseKeys: {
+        type: Object as () => { [K in keyof Paginated]: string },
         default: {
-            count:"count",
-            lastPage:"lastPage",
-            next:"next",
-            previous:"previous",
-            results:"results",
-        } as {[K in keyof Paginated]:string}
+            count: "count",
+            lastPage: "lastPage",
+            next: "next",
+            previous: "previous",
+            results: "results",
+        } as { [K in keyof Paginated]: string }
     },
-    orderingKey:{
-        type:String,
-        default:"ordering",
+    orderingKey: {
+        type: String,
+        default: "ordering",
     }
 })
 
-// const _s = defineSlots<Omit<QTableSlots,keyof {"top":any,"top-left":any,"top-right":any}>>()
-// const slots = Object.keys(_s).filter(k=>!["top","top-left","top-right"].includes(k)).map(k=>_s[k as keyof typeof _s])
-const slots = defineSlots<QTableSlots>()
+const slots = defineSlots<AnServerDataTableSlots>()
+
+const removeFilterModalSlotsPrefix = (val: string) => val.replace('filter-modal-', '')
 
 const defaultPagination = {
     descending: false,
@@ -299,7 +335,7 @@ const data = reactive({
 
 const fetchData = async () => {
     console.log(data.filter);
-    
+
     if (props.link) {
         data.ordering = getOrderingText()
         data.tableIsLoading = true
@@ -368,12 +404,12 @@ onBeforeMount(() => {
 })
 
 const apiGetData = (data?: { pagination?: Pagination, filter?: Filter, ordering?: string, search: string }) => {
-    
-    return (props.axiosInterceptor || axios).get<Paginated>(props.link,{
-        params:{
+
+    return (props.axiosInterceptor || axios).get<Paginated>(props.link, {
+        params: {
             ...data?.pagination,
             ...data?.filter,
-            [props.orderingKey] : data?.ordering,
+            [props.orderingKey]: data?.ordering,
             ...props.linkParams
         }
     })
@@ -383,19 +419,19 @@ const filter = (dataFilter: Filter) => {
 
     let filter = {} as Filter
 
-    Object.keys(dataFilter).forEach((key)=>{
+    Object.keys(dataFilter).forEach((key) => {
         filter[key] = dataFilter[key].toString()
         // const field = props.filterModalData.fields.find(i=>i.urlParam === key)
         // if(field){
         //     if(field.type === 'checkboxs' || field.type === 'select-multiple'){
-                
+
         //     }
         // }else{
         //     filter[key] = dataFilter[key]
         // }
     })
     data.filter = filter;
-    return fetchData().finally(()=>{
+    return fetchData().finally(() => {
         data.filter = dataFilter
     })
 }
