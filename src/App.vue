@@ -16,7 +16,7 @@
 
       title="kkkkk"
       has-search
-      :filter-modal-data="fi"
+      :filter-modal-data="filterModalData"
       has-filter
     >
 
@@ -47,23 +47,23 @@ type Product = {
   has_variants: boolean;
 };
 
-const fi : FilterModalData = {
+const filterModalData : FilterModalData = {
         fields:[
           {
-            label:"Helloo",
+            label:"Popular domain",
             type:'checkboxs',
-            urlParam:'aymane',
+            urlParam:'products_domain',
             choices:[
               {
-                label:'Kkkk',
-                value:"kkkk"
+                label:'Skinecare',
+                value:"skinecare"
               },
               {
-                label:'Llllll',
-                value:"llll"
+                label:'Gaming',
+                value:"gaming"
               },
             ],
-            defaultValue:'llll'
+            defaultValue:'gaming'
           },
         ],
       }
