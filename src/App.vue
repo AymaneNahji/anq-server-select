@@ -1,26 +1,6 @@
 <template>
   <div class="mx-auto container border-2 border-black p-1">
-    <AnServerDataTable 
-      link="http://localhost:8000/products/client/products/" 
-      :columns="cols" 
-      :link-params="{
-        page_size:1
-      }"
-      :pagination-response-keys="{
-        count:'count',
-        lastPage:'last_page',
-        next:'next',
-        previous:'previous',
-        results:'results',
-      }"
-
-      title="kkkkk"
-      has-search
-      :filter-modal-data="filterModalData"
-      has-filter
-    >
-
-    </AnServerDataTable>
+    <AnServerSelect model-value="" link="goo" CL />
 
   </div>
 </template>
@@ -28,6 +8,7 @@
 <script setup lang="ts">
 import { QTableColumn } from 'quasar';
 import AnServerDataTable, { FilterModalData } from './components/AnServerDataTable.vue';
+import AnServerSelect from './components/AnServerSelect.vue';
 
 
 
