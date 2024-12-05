@@ -1,7 +1,7 @@
 <template>
   <div class="mx-auto container border-2 border-black p-1">
-    <AnServerSelect model-value="" link="goo" CL />
-
+    <AnPhoneNumberInput v-model="data.phone" />
+    {{ data.phone }}
   </div>
 </template>
 
@@ -9,8 +9,13 @@
 import { QTableColumn } from 'quasar';
 import AnServerDataTable, { FilterModalData } from './components/AnServerDataTable.vue';
 import AnServerSelect from './components/AnServerSelect.vue';
+import AnPhoneNumberInput from './components/AnPhoneNumberInput.vue';
+import { reactive } from 'vue';
 
 
+const data = reactive({
+  phone:''
+})
 
 type Product = {
   id: number;
