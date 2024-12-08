@@ -11,12 +11,18 @@
       <template #selected-item="props">
         {{ props.opt.name }}
       </template>
+      <template v-for="(_, name, index) in slots" #[removeCountrySelectSlotsPrefix(name.toString())]="slotData" :key="index">
+            <slot v-if="name.toString().startsWith('country-select-')" :name="name" v-bind="(slotData as any)" :key="index"> </slot>
+        </template>
     </q-select>
 
     <!-- Phone Number Input -->
     <q-input v-bind="getInputProps()" v-model="data.phoneNumber" :rules="[phoneNumberRule]" label="Phone Number"
       ref="phoneInput" class="phone-input"
       @keypress="(e) => onlyNumberCharactersRegex.test(e.key) ? undefined : e.preventDefault()">
+      <template v-for="(_, name, index) in slots" #[name]="slotData" :key="index">
+            <slot v-if="!name.toString().startsWith('country-select-')" :name="name" v-bind="(slotData as any)" :key="index"> </slot>
+        </template>
     </q-input>
   </div>
 </template>
@@ -25,7 +31,7 @@
 import { getCountryData, getCountryDataList, ICountryData, TCountryCode } from 'countries-list';
 import { onBeforeMount, reactive, ref, watch } from 'vue';
 import parsePhoneNumber, { parseIncompletePhoneNumber } from 'libphonenumber-js'
-import { QFieldProps, QInput, QInputProps, QSelect, QSelectProps } from 'quasar';
+import { QFieldProps, QInput, QInputProps, QInputSlots, QSelect, QSelectProps, QSelectSlots } from 'quasar';
 import { inferClosestCountry, onlyNumberCharactersRegex } from './functions';
 
 type Props = {
@@ -34,6 +40,14 @@ type Props = {
     defaultCountry?: TCountryCode
   } & Omit<QSelectProps, 'modelValue'>
 } & QInputProps
+
+type Slots = {
+  [K in keyof QSelectSlots as`country-select-${K}`]: QSelectSlots[K]
+} & QInputSlots
+
+const slots = defineSlots<Slots>()
+
+const removeCountrySelectSlotsPrefix = (val: string) => val.replace('country-select-', '')
 
 const getFlagEmoji = (countryCode:TCountryCode)=>String.fromCodePoint(...countryCode.toUpperCase().split("")
 .map((char) => 127397 + char.charCodeAt(0)))
@@ -109,7 +123,7 @@ watch([() => data.phoneNumber, () => data.selectedCountry], () => {
 })
 
 watch(() => props.modelValue, () => {
-  console.log(getFlagEmoji('US'));
+  // console.log(getFlagEmoji('US'));
   
   if (props.modelValue?.toString() == `+${data.selectedCountry.phone[0]}${data.phoneNumber}`)
     return

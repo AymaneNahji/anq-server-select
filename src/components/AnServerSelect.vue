@@ -1,9 +1,8 @@
 <template>
-    {{ data.isLoading }}
     <q-select v-bind="props" :options="data.options" @filter="handleFilter" use-input :input-value="data.inputValue"
         :loading="data.isLoading" @update:input-value="data.inputValue = $event" >
         <template v-for="(_, name, index) in slots" #[name]="slotData" :key="index">
-            <slot :name="name" v-bind="(slotData as any)"> </slot>
+            <slot :name="name" v-bind="(slotData as any)" :key="index"> </slot>
         </template>
     </q-select>
 </template>
@@ -11,7 +10,7 @@
 <script setup lang="ts">
 import axios, { AxiosInstance } from 'axios';
 import { QSelect, QSelectProps, QSelectSlots } from 'quasar';
-import { reactive } from 'vue';
+import { onBeforeMount, reactive } from 'vue';
 
 type Props = {
     link: string,
@@ -45,12 +44,12 @@ const handleFilter : ((inputValue: string, doneFn: (callbackFn: () => void, afte
     doneFn(()=>{})
 
     emit('filter', value); // Emit the filter event
-    if (!value) {
-        // If input is empty, reset to default options
-        data.options = props.defaultOptions || [];
-        emit('update:options', data.options); // Emit options update
-        return;
-    }
+    // if (!value) {
+    //     // If input is empty, reset to default options
+    //     data.options = props.defaultOptions || [];
+    //     emit('update:options', data.options); // Emit options update
+    //     return;
+    // }
 
     data.isLoading = true;
     emit('loading', true); // Emit loading state
@@ -74,6 +73,24 @@ const handleFilter : ((inputValue: string, doneFn: (callbackFn: () => void, afte
     })
 
 };
+
+onBeforeMount(()=>{
+    (props.axiosInterceptor || axios).get(props.link, {
+        params: { [(props.searchParam || 'search')]: '' }, // Pass the filter value as a query parameter
+    }).then(response => {
+        data.options = response.data || [];
+        emit('update:options', data.options); // Emit options update
+    }).catch((error) => {
+
+        console.error('Error fetching filtered options:', error);
+        emit('error', error); // Emit error event
+    }).finally(() => {
+
+        data.isLoading = false;
+        emit('loading', false); // Emit loading state
+    })
+})
+
 </script>
 
 <style scoped></style>

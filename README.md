@@ -5,7 +5,9 @@
 And use our helper components:
 
 ### AnModal
+
 a simple modal with global standars (like stop and disable all buttons when loading initial data)
+
 ```
 <template>
   <q-page class="row items-center justify-evenly">
@@ -59,9 +61,8 @@ const modalRef = ref<InstanceType<typeof AnModal>>()
 
 ```
 
-
-
 ### AnModalForm
+
 is the same of AnModal just with support form behavior like form-is-loading and @submit
 
 ```
@@ -105,15 +106,63 @@ const data = reactive({
 </script>
 ```
 
+### AnPhoneNumberInput
+
+A reactive international phone number input force the user to add a real phone numbers with full props/slots access to internal components
+
+```
+<template>
+<AnPhoneNumberInput v-model="data.phone" class="gap-3" outlined :country-props="{outlined:true,dense:true,excludeCountries:['US']}" dense >
+  <template #country-select-prepend>
+    <q-icon name="flag" />
+  </template>
+</AnPhoneNumberInput>
+</template>
+
+<script>
+import { reactive } from 'vue';
+import { AnPhoneNumberInput } from 'an-quasar-utils'
+
+const data = reactive({
+  phone:'+21235980022'
+})
+
+</script>
+```
+
+### AnServerSelect
+
+An QSelect with live search for simplify server data selection
+
+```
+<template>
+
+<AnServerSelect link="https://restcountries.com/v3.1/all?fields=name,cca2,idd,flag" v-model="data.country" :option-label="op=>op.name.common" option-value="cca2" emit-value map-options  />
+      {{data.countryCode}}
+
+</template>
+
+<script>
+import { reactive } from 'vue';
+import { AnServerSelect } from 'an-quasar-utils'
+
+const data = reactive({
+  countryCode:null as string | null
+})
+
+</script>
+```
 
 ### AnServerDataTable
+
 A customizable QTable with live search and intelligent filter modal (using just with a server paginated data)
+
 ```
 <template>
   <div class="mx-auto container border-2 border-black p-1">
-    <AnServerDataTable 
-      link="http://localhost:8000/products/client/products/" 
-      :columns="cols" 
+    <AnServerDataTable
+      link="http://localhost:8000/products/client/products/"
+      :columns="cols"
       :link-params="{
         page_size:1
       }"
@@ -276,5 +325,3 @@ const cols: QTableColumn<Product>[] = [
 ```
 
 # Big Note : use TypeScript for descover our utils because there is a lot of props/slots/exposes we can't document them
-
-

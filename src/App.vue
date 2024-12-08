@@ -1,9 +1,8 @@
 <template>
-  <q-btn label="Edit number" @click="data.phone = '+212635980044'" color="primary" />
   <q-form @submit="onSubmit" class="mx-auto container border-2">
     <q-card class="p-5 flex flex-col gap-5">
-      <AnPhoneNumberInput v-model="data.phone" outlined :country-props="{outlined:true,dense:true,excludeCountries:['MA']}" class="gap-3" dense />
-      {{ data.phone }}
+      <AnServerSelect link="https://restcountries.com/v3.1/all?fields=name,cca2,idd,flag" v-model="data.country" :option-label="op=>op.name.common" option-value="cca2" emit-value map-options  />
+      {{data.country}}
       <q-btn label="Submit" type="submit" color="primary" />
     </q-card>
   </q-form>
@@ -18,14 +17,9 @@ import { onBeforeMount, reactive } from 'vue';
 
 
 const data = reactive({
-  phone: ''
+  country: null as string | null
 })
 
-onBeforeMount(()=>{
-  setTimeout(()=>{
-    data.phone = '+212635980022'
-  },2000)
-})
 
 const onSubmit = () => {
   console.log(data)
