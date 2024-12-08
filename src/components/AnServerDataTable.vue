@@ -334,7 +334,7 @@ const data = reactive({
 })
 
 const fetchData = async () => {
-    console.log(data.filter);
+    // console.log(data.filter);
 
     if (props.link) {
         data.ordering = getOrderingText()

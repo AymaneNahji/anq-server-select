@@ -1,5 +1,32 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable no-prototype-builtins */
+import { parsePhoneNumberFromString, CountryCode } from 'libphonenumber-js';
+
+// Helper to find country by calling code
+import metadata from 'libphonenumber-js/metadata.min.json';
+export const findClosestCountry = (callingCode:string) => {
+  const country = Object.keys(metadata.countries).find((key) => {
+    return (metadata.countries[key as CountryCode] as any)[0] === callingCode;
+  });
+  return country || null;
+};
+
+// Parse a number and attempt to infer the closest country
+export const inferClosestCountry = (phoneNumber:string) => {
+  const parsedNumber = parsePhoneNumberFromString(phoneNumber);
+  if (parsedNumber && parsedNumber.isValid()) {
+    return parsedNumber.country;
+  }
+  
+  // If the number is invalid, deduce country from calling code
+  const callingCodeMatch = phoneNumber.match(/^\+(\d+)/);
+  if (callingCodeMatch) {
+    const callingCode = callingCodeMatch[1];
+    return findClosestCountry(callingCode);
+  }
+  return null;
+};
+
 export const objectToQueryString = (obj?: Record<string, any>): string => {
   if (!obj) {
     return '';
@@ -46,3 +73,5 @@ export const objectToFormData = (
   }
   return formData;
 };
+
+export const onlyNumberCharactersRegex = /\d+/;

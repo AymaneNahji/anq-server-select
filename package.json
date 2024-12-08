@@ -21,6 +21,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@rollup/rollup-win32-x64-msvc": "^4.28.1",
     "axios": "^1.7.7",
     "countries-list": "^3.1.1",
     "libphonenumber-js": "^1.11.16",

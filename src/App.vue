@@ -1,8 +1,12 @@
 <template>
-  <div class="mx-auto container border-2 border-black p-1">
-    <AnPhoneNumberInput v-model="data.phone" />
-    {{ data.phone }}
-  </div>
+  <q-btn label="Edit number" @click="data.phone = '+212635980044'" color="primary" />
+  <q-form @submit="onSubmit" class="mx-auto container border-2">
+    <q-card class="p-5 flex flex-col gap-5">
+      <AnPhoneNumberInput v-model="data.phone" outlined :country-props="{outlined:true,dense:true,excludeCountries:['MA']}" class="gap-3" dense />
+      {{ data.phone }}
+      <q-btn label="Submit" type="submit" color="primary" />
+    </q-card>
+  </q-form>
 </template>
 
 <script setup lang="ts">
@@ -10,12 +14,22 @@ import { QTableColumn } from 'quasar';
 import AnServerDataTable, { FilterModalData } from './components/AnServerDataTable.vue';
 import AnServerSelect from './components/AnServerSelect.vue';
 import AnPhoneNumberInput from './components/AnPhoneNumberInput.vue';
-import { reactive } from 'vue';
+import { onBeforeMount, reactive } from 'vue';
 
 
 const data = reactive({
-  phone:''
+  phone: ''
 })
+
+onBeforeMount(()=>{
+  setTimeout(()=>{
+    data.phone = '+212635980022'
+  },2000)
+})
+
+const onSubmit = () => {
+  console.log(data)
+}
 
 type Product = {
   id: number;
@@ -29,30 +43,30 @@ type Product = {
   avg_rating: number;
   ratings_count: number;
   category: number;
-  brand: number|null;
+  brand: number | null;
   has_variants: boolean;
 };
 
-const filterModalData : FilterModalData = {
-        fields:[
-          {
-            label:"Popular domain",
-            type:'checkboxs',
-            urlParam:'products_domain',
-            choices:[
-              {
-                label:'Skinecare',
-                value:"skinecare"
-              },
-              {
-                label:'Gaming',
-                value:"gaming"
-              },
-            ],
-            defaultValue:'gaming'
-          },
-        ],
-      }
+const filterModalData: FilterModalData = {
+  fields: [
+    {
+      label: "Popular domain",
+      type: 'checkboxs',
+      urlParam: 'products_domain',
+      choices: [
+        {
+          label: 'Skinecare',
+          value: "skinecare"
+        },
+        {
+          label: 'Gaming',
+          value: "gaming"
+        },
+      ],
+      defaultValue: 'gaming'
+    },
+  ],
+}
 
 const cols: QTableColumn<Product>[] = [
   {
