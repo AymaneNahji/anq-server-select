@@ -10,10 +10,9 @@
 
 <script setup lang="ts">
 import { QTableColumn } from 'quasar';
-import AnServerDataTable, { FilterModalData } from './components/AnServerDataTable.vue';
+import  { FilterModalData } from './components/AnServerDataTable.vue';
 import AnServerSelect from './components/AnServerSelect.vue';
-import AnPhoneNumberInput from './components/AnPhoneNumberInput.vue';
-import { onBeforeMount, reactive } from 'vue';
+import { reactive } from 'vue';
 
 
 const data = reactive({

@@ -1,6 +1,6 @@
 {
   "name": "an-quasar-utils",
-  "version": "0.0.10",
+  "version": "0.0.11",
   "type": "module",
   "main": "./dist/an-utils.umd.cjs",
   "types": "./dist/types/index.d.ts",

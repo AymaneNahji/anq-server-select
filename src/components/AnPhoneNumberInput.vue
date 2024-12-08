@@ -29,9 +29,9 @@
 
 <script setup lang="ts">
 import { getCountryData, getCountryDataList, ICountryData, TCountryCode } from 'countries-list';
-import { onBeforeMount, reactive, ref, watch } from 'vue';
-import parsePhoneNumber, { parseIncompletePhoneNumber } from 'libphonenumber-js'
-import { QFieldProps, QInput, QInputProps, QInputSlots, QSelect, QSelectProps, QSelectSlots } from 'quasar';
+import { reactive, ref, watch } from 'vue';
+import parsePhoneNumber from 'libphonenumber-js'
+import { QInput, QInputProps, QInputSlots, QSelect, QSelectProps, QSelectSlots } from 'quasar';
 import { inferClosestCountry, onlyNumberCharactersRegex } from './functions';
 
 type Props = {
