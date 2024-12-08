@@ -49,8 +49,8 @@ const slots = defineSlots<Slots>()
 
 const removeCountrySelectSlotsPrefix = (val: string) => val.replace('country-select-', '')
 
-const getFlagEmoji = (countryCode:TCountryCode)=>String.fromCodePoint(...countryCode.toUpperCase().split("")
-.map((char) => 127397 + char.charCodeAt(0)))
+// const getFlagEmoji = (countryCode:TCountryCode)=>String.fromCodePoint(...countryCode.toUpperCase().split("")
+// .map((char) => 127397 + char.charCodeAt(0)))
 
 
 const emit = defineEmits<{
