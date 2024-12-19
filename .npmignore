@@ -1,6 +1,0 @@
-# Ignore everything
-*
-
-# Except dist folder and package.json
-!dist/
-!package.json
