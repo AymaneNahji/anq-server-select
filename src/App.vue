@@ -1,22 +1,58 @@
 <template>
   <q-form @submit="onSubmit" class="mx-auto container border-2">
     <q-card class="p-5 flex flex-col gap-5">
-      <AnServerSelect link="https://restcountries.com/v3.1/all?fields=name,cca2,idd,flag" v-model="data.country" :option-label="op=>op.name.common" option-value="cca2" emit-value map-options  />
+      <AnServerSelect link="https://restcountries.com/v3.1/all?fields=name,cca2,idd,flag" multiple :rules="[val=>!!val || 'hello']" v-model="data.country" :option-label="op=>op.name.common" option-value="cca2" emit-value map-options  />
       {{data.country}}
       <q-btn label="Submit" type="submit" color="primary" />
     </q-card>
   </q-form>
+
+  <AnServerDataTable has-filter  title="modelName" :filter-modal-data="{
+    fields:[
+      {
+        label:'title',
+        type:'select',
+        urlParam:'title',
+        choices:[
+          {
+            label:'ddddddd',
+            value:'555'
+          }
+        ]
+      }
+    ]
+  }" has-search :columns="cols"
+      :link="`http://localhost:8000/models/book/`" >
+      <template #body-cell-actions="props">
+        <q-td :props="props">
+          <q-btn icon="more_vert" unelevated round>
+            <q-menu>
+              <q-list>
+                <q-item clickable class="flex justify-center items-center gap-1 text-blue-600" >
+                  <q-icon name="edit" size="1.5rem" />
+                  <span>Update</span>
+                </q-item>
+                <q-item clickable class="flex justify-center items-center gap-1 text-red-600" >
+                  <q-icon name="delete" size="1.5rem" />
+                  <span>Delete</span>
+                </q-item>
+              </q-list>
+            </q-menu>
+          </q-btn>
+        </q-td>
+      </template>
+    </AnServerDataTable>
 </template>
 
 <script setup lang="ts">
 import { QTableColumn } from 'quasar';
-import  { FilterModalData } from './components/AnServerDataTable.vue';
+import  AnServerDataTable, { FilterModalData } from './components/AnServerDataTable.vue';
 import AnServerSelect from './components/AnServerSelect.vue';
 import { reactive } from 'vue';
 
 
 const data = reactive({
-  country: null as string | null
+  country: []
 })
 
 
@@ -61,7 +97,7 @@ const filterModalData: FilterModalData = {
   ],
 }
 
-const cols: QTableColumn<Product>[] = [
+const cols: QTableColumn[] = [
   {
     field: 'id',
     label: 'ID',
@@ -69,13 +105,7 @@ const cols: QTableColumn<Product>[] = [
     align: 'left',
     sortable: true,
   },
-  {
-    field: 'slug',
-    label: 'Slug',
-    name: 'slug',
-    align: 'left',
-    sortable: true,
-  },
+
   {
     field: 'name',
     label: 'Name',
@@ -90,69 +120,6 @@ const cols: QTableColumn<Product>[] = [
     align: 'left',
     sortable: false,
   },
-  {
-    field: 'origin_price',
-    label: 'Original Price',
-    name: 'origin_price',
-    align: 'right',
-    sortable: true,
-  },
-  {
-    field: 'discount_percentage',
-    label: 'Discount %',
-    name: 'discount_percentage',
-    align: 'right',
-    sortable: true,
-  },
-  {
-    field: 'price',
-    label: 'Price',
-    name: 'price',
-    align: 'right',
-    sortable: true,
-  },
-  {
-    field: 'image',
-    label: 'Image',
-    name: 'image',
-    align: 'left',
-    sortable: false,
-  },
-  {
-    field: 'avg_rating',
-    label: 'Avg Rating',
-    name: 'avg_rating',
-    align: 'right',
-    sortable: true,
-  },
-  {
-    field: 'ratings_count',
-    label: 'Ratings Count',
-    name: 'ratings_count',
-    align: 'right',
-    sortable: true,
-  },
-  {
-    field: 'category',
-    label: 'Category',
-    name: 'category',
-    align: 'left',
-    sortable: true,
-  },
-  {
-    field: 'brand',
-    label: 'Brand',
-    name: 'brand',
-    align: 'left',
-    sortable: true,
-  },
-  {
-    field: 'has_variants',
-    label: 'Has Variants',
-    name: 'has_variants',
-    align: 'center',
-    sortable: false,
-  }
 ]
 </script>
 

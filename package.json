@@ -1,6 +1,6 @@
 {
   "name": "an-quasar-utils",
-  "version": "0.0.11",
+  "version": "0.0.14",
   "type": "module",
   "main": "./dist/an-utils.umd.cjs",
   "types": "./dist/types/index.d.ts",
@@ -11,7 +11,8 @@
   "exports": {
     ".": {
       "import": "./dist/an-utils.js",
-      "require": "./dist/an-utils.umd.cjs"
+      "require": "./dist/an-utils.umd.cjs",
+      "types": "./dist/types/index.d.ts"
     }
   },
   "scripts": {
@@ -21,7 +22,6 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@rollup/rollup-win32-x64-msvc": "^4.28.1",
     "axios": "^1.7.7",
     "countries-list": "^3.1.1",
     "libphonenumber-js": "^1.11.16",
@@ -40,7 +40,8 @@
     "typescript": "^5.5.3",
     "vite": "^5.4.1",
     "vite-plugin-css-injected-by-js": "^3.5.1",
-    "vue-tsc": "^2.0.29"
+    "vue-tsc": "^2.0.29",
+    "@rollup/rollup-win32-x64-msvc": "^4.28.1"
   },
   "keywords": [
     "an-quasar-utils",

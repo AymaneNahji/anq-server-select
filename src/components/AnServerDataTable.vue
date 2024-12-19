@@ -420,7 +420,7 @@ const filter = (dataFilter: Filter) => {
     let filter = {} as Filter
 
     Object.keys(dataFilter).forEach((key) => {
-        filter[key] = dataFilter[key].toString()
+        filter[key] = (dataFilter[key] || '').toString()
         // const field = props.filterModalData.fields.find(i=>i.urlParam === key)
         // if(field){
         //     if(field.type === 'checkboxs' || field.type === 'select-multiple'){
