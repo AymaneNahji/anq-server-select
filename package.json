@@ -1,6 +1,6 @@
 {
   "name": "an-quasar-utils",
-  "version": "0.0.14",
+  "version": "0.0.15",
   "type": "module",
   "main": "./dist/an-utils.umd.cjs",
   "types": "./dist/types/index.d.ts",
@@ -94,5 +94,9 @@
     "npm-utils",
     "reusable-components"
   ],
-  "author": "aymane_nahji"
+  "author": "aymane_nahji",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/AymaneNahji/an-quasar-utils"
+  }
 }
