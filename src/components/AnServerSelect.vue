@@ -1,6 +1,7 @@
 <template>
-    <q-select v-bind="props" :options="data.options" @filter="handleFilter" use-input :input-value="data.inputValue"
-        :loading="data.isLoading" @update:input-value="data.inputValue = $event" >
+    <q-select v-bind="props"
+        v-model="modelValue" :options="data.options" @filter="handleFilter" use-input :input-value="data.inputValue"
+        :loading="data.isLoading" @update:input-value="data.inputValue = $event">
         <template v-for="(_, name, index) in slots" #[name]="slotData" :key="index">
             <slot :name="name" v-bind="(slotData as any)" :key="index"> </slot>
         </template>
@@ -19,7 +20,12 @@ type Props = {
     searchParam?: string
 } & Omit<QSelectProps, 'options'>;
 
-const props = defineProps<Props>();
+const props = withDefaults(defineProps<Props>(), {
+    dark: undefined,
+    optionsDark: undefined
+});
+
+const modelValue = defineModel<QSelect['modelValue']>()
 
 const slots = defineSlots<QSelectSlots>();
 
@@ -39,9 +45,9 @@ const data = reactive({
 
 
 
-const handleFilter : ((inputValue: string, doneFn: (callbackFn: () => void, afterFn?: (ref: QSelect) => void) => void, abortFn: () => void) => void) = (value: string,doneFn) => {
+const handleFilter: ((inputValue: string, doneFn: (callbackFn: () => void, afterFn?: (ref: QSelect) => void) => void, abortFn: () => void) => void) = (value: string, doneFn) => {
     // for stop the defaut filter loading
-    doneFn(()=>{})
+    doneFn(() => { })
 
     emit('filter', value); // Emit the filter event
     // if (!value) {
@@ -58,7 +64,7 @@ const handleFilter : ((inputValue: string, doneFn: (callbackFn: () => void, afte
         params: { [(props.searchParam || 'search')]: value }, // Pass the filter value as a query parameter
     }).then(response => {
 
-        doneFn(()=>{
+        doneFn(() => {
             data.options = response.data || [];
         })
         emit('update:options', data.options); // Emit options update
@@ -74,7 +80,7 @@ const handleFilter : ((inputValue: string, doneFn: (callbackFn: () => void, afte
 
 };
 
-onBeforeMount(()=>{
+onBeforeMount(() => {
     (props.axiosInterceptor || axios).get(props.link, {
         params: { [(props.searchParam || 'search')]: '' }, // Pass the filter value as a query parameter
     }).then(response => {
@@ -91,6 +97,9 @@ onBeforeMount(()=>{
     })
 })
 
+defineOptions({
+    inheritAttrs: false
+})
 </script>
 
 <style scoped></style>
