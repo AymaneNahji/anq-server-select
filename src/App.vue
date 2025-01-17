@@ -7,7 +7,7 @@
     </q-card>
   </q-form>
 
-  <AnServerDataTable has-filter  title="modelName" :filter-modal-data="{
+  <AnServerDataTable has-filter show-page-size-select :page-sizes="[1,3]" title="modelName" :filter-modal-data="{
     fields:[
       {
         label:'title',
@@ -22,7 +22,10 @@
       }
     ]
   }" has-search :columns="cols"
-      :link="`http://localhost:8000/models/book/`" >
+      :link="`http://localhost:8000/admin/roles/`" >
+      <template #pagination>
+        hhhhhhhhhhhh
+      </template>
       <template #body-cell-actions="props">
         <q-td :props="props">
           <q-btn icon="more_vert" unelevated round>

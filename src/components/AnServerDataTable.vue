@@ -17,14 +17,16 @@
                         <div class="flex items-center gap-2">
 
                             <template v-if="props.hasSearch">
-                                <slot name="search-input" :loading="data.searchIsLoading" :value="data.search" :search="(val:string)=>{data.search = val ; onSearch()}">
+                                <slot name="search-input" :loading="data.searchIsLoading" :value="data.search"
+                                    :search="(val: string) => { data.search = val; onSearch() }">
                                     <q-input v-if="props.hasSearch" label="Search" dense v-model="data.search"
                                         @update:model-value="onSearch" clearable :debounce="500" class="!items-start"
                                         outlined :loading="data.searchIsLoading" />
                                 </slot>
                             </template>
                             <template v-if="props.hasFilter">
-                                <slot name="filter-btn" label="Filter" color="primary" :click="()=>filterModal?.show()">
+                                <slot name="filter-btn" label="Filter" color="primary"
+                                    :click="() => filterModal?.show()">
                                     <q-btn label="Filter" no-caps color="primary" @click="filterModal?.show()" />
                                 </slot>
                             </template>
@@ -33,21 +35,37 @@
                 </div>
             </template>
             <template #bottom>
-                <div class=" w-full flex justify-center items-center">
-                    <q-pagination v-model="data.pagination.page" :max-pages="6"
-                        :max="(data.rows[props.paginationResponseKeys.lastPage] as unknown as number)"
-                        @update:model-value="fetchData" direction-links boundary-links />
+                <div class=" w-full flex justify-center items-center"
+                    :class="{ '!justify-between': props.showPageSizeSelect }">
+                    <div v-if="props.showPageSizeSelect" class="flex justify-center items-center gap-1">
+                        <slot name="page-size" :value="data.pagination.rowsPerPage"
+                            :change="(val: number) => { data.pagination.rowsPerPage = val; fetchData() }">
+                            <span>
+                                Rows :
+                            </span>
+                            <q-select v-model="data.pagination.rowsPerPage" :options="props.pageSizes" outlined dense
+                                color="primary" @update:model-value="fetchData" />
+                        </slot>
+                    </div>
+                    <slot name="pagination" :value="data.pagination.page"
+                        :change="(val: number) => { data.pagination.page = val; fetchData() }">
+                        <q-pagination v-model="data.pagination.page" :max-pages="6"
+                            :max="(data.rows[props.paginationResponseKeys.lastPage] as unknown as number)"
+                            @update:model-value="fetchData" direction-links boundary-links />
+                    </slot>
                 </div>
             </template>
             <template v-for="(_, name, index) in slots" #[name]="slotData" :key="index">
-                <slot v-if="!name.toString().startsWith('filter-modal-')" :name="(name as any)" v-bind="(slotData as any)">
+                <slot v-if="!name.toString().startsWith('filter-modal-')" :name="(name as any)"
+                    v-bind="(slotData as any)">
                 </slot>
             </template>
         </q-table>
     </div>
     <AnModalForm ref="filterModal" v-bind="props.filterModalData.props"
-        :ok-label="props.filterModalData.props?.okLabel || 'Filter'" :title="props.filterModalData.props?.title || 'Filter'"
-        @submit="onFilter" :form-is-loading="data.filterIsLoading">
+        :ok-label="props.filterModalData.props?.okLabel || 'Filter'"
+        :title="props.filterModalData.props?.title || 'Filter'" @submit="onFilter"
+        :form-is-loading="data.filterIsLoading">
         <template #content>
             <template v-for="(field, index) in props.filterModalData.fields" :key="index">
                 <template v-if="field.type == 'text'">
@@ -130,7 +148,8 @@
                     </q-input>
                 </template>
                 <template v-if="field.type == 'number'">
-                    <q-input outlined type="number" :label="field.label" v-model="data.filter[field.urlParam]" clearable />
+                    <q-input outlined type="number" :label="field.label" v-model="data.filter[field.urlParam]"
+                        clearable />
                 </template>
                 <template v-if="field.type == 'boolean-checkbox'">
                     <q-checkbox :label="field.label"
@@ -158,7 +177,8 @@
                 </template>
             </template>
         </template>
-        <template v-for="(_, name, index) in slots" #[removeFilterModalSlotsPrefix(name.toString())]="slotData" :key="index">
+        <template v-for="(_, name, index) in slots" #[removeFilterModalSlotsPrefix(name.toString())]="slotData"
+            :key="index">
             <slot v-if="name.toString().startsWith('filter-modal-')" :name="name" v-bind="(slotData as any)"></slot>
         </template>
 
@@ -187,20 +207,30 @@ type Filter = {
 }
 type Pagination = { page?: number, page_size?: number }
 type FilterModalSlots = InstanceType<typeof AnModalForm>['$slots']
-export type AnServerDataTableSlots = QTableSlots & {
+
+export type AnServerDataTableSlots = Omit<QTableSlots,'pagination'> & {
     [K in keyof FilterModalSlots as K extends "content" ? string : `filter-modal-${K}`]: FilterModalSlots[K]
 } & {
     "title"?(_: {}): any;
     "search-input"?(_: {
-        loading:boolean;
-        value:string;
-        search:(val:string)=>void;
+        loading: boolean;
+        value: string;
+        search: (val: string) => void;
     }): any;
     "filter-btn"?(_: {
-        label:string;
-        color:string;
-        click:()=>void;
+        label: string;
+        color: string;
+        click: () => void;
     }): any;
+    "pagination"?(_: {
+        value: number,
+        change: (val: number) => void;
+    }): any;
+    "page-size"?(_: {
+        value: number,
+        change: (val: number) => void;
+    }): any;
+
 }
 export type FilterModalData = {
     fields: {
@@ -277,6 +307,10 @@ const props = defineProps({
         type: Boolean,
         default: false
     },
+    showPageSizeSelect: {
+        type: Boolean,
+        default: false
+    },
     enableRowClick: {
         type: Boolean,
         default: false
@@ -304,6 +338,14 @@ const props = defineProps({
     orderingKey: {
         type: String,
         default: "ordering",
+    },
+    pageSizes: {
+        type: Object as () => number[],
+        default: [5, 10, 25, 50]
+    },
+    searchUrlParam: {
+        type: String,
+        default: 'search'
     }
 })
 
@@ -314,7 +356,7 @@ const removeFilterModalSlotsPrefix = (val: string) => val.replace('filter-modal-
 const defaultPagination = {
     descending: false,
     page: 1,
-    rowsPerPage: 10,
+    rowsPerPage: props.pageSizes[0],
     sortBy: null as string | null,
     rowsNumber: 10,
 }
@@ -339,7 +381,7 @@ const fetchData = async () => {
     if (props.link) {
         data.ordering = getOrderingText()
         data.tableIsLoading = true
-        await apiGetData({ pagination: { page: data.pagination.page }, filter: data.filter, ordering: data.ordering, search: data.search }).then(res => {
+        await apiGetData({ pagination: { page: data.pagination.page, page_size: data.pagination.rowsPerPage }, filter: data.filter, ordering: data.ordering, search: data.search }).then(res => {
             data.rows = res.data as any
             emit('getDataSuccessfuly', res.data)
         })
@@ -381,7 +423,7 @@ const getOrderingText = () => {
 
 const onSearch = () => {
     data.searchIsLoading = true;
-    filter({ search: data.search })
+    fetchData()
         .finally(() => {
             data.searchIsLoading = false;
         })
@@ -410,7 +452,8 @@ const apiGetData = (data?: { pagination?: Pagination, filter?: Filter, ordering?
             ...data?.pagination,
             ...data?.filter,
             [props.orderingKey]: data?.ordering,
-            ...props.linkParams
+            ...props.linkParams,
+            [props.searchUrlParam || 'search']:data?.search
         }
     })
 }
