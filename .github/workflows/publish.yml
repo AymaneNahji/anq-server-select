@@ -1,0 +1,30 @@
+name: Publier sur npm
+
+on:
+  push:
+    branches:
+      - main  # ou 'master'
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Récupérer le code
+        uses: actions/checkout@v3
+
+      - name: Configurer Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          registry-url: https://registry.npmjs.org/
+
+      - name: Installer les dépendances
+        run: npm i
+
+      - name: Construire le projet (optionnel)
+        run: npm run build
+
+      - name: Publier sur npm
+        run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

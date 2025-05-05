@@ -1,327 +1,104 @@
-# AN Quasar Utils for simplify your dev life
+# AN Quasar Server Select
 
-`npm i an-quasar-utils` or `yarn add an-quasar-utils`
+A powerful, customizable server select component for Quasar Framework and Vue 3 applications. This component provides a seamless way to implement server selection functionality with validation and integration with Quasar's design system.
 
-And use our helper components:
+## Features
 
-### AnModal
+- 🎨 Seamless integration with Quasar Framework
+- 🔍 Server selection with validation
+- 📱 Responsive design
+- 🎯 TypeScript support
+- 🎭 Customizable styling
+- 🌐 Internationalization support
+- 📦 Easy to install and use
 
-a simple modal with global standars (like stop and disable all buttons when loading initial data)
+## Installation
 
+```bash
+npm install anq-quasar-server-select
+# or
+yarn add anq-quasar-server-select
 ```
+
+## Requirements
+
+- Vue 3.x
+- Quasar Framework 2.x
+- Node.js >= 14.0.0
+
+## Usage
+
+```vue
 <template>
-  <q-page class="row items-center justify-evenly">
-
-    <AnModal ref="modalRef" title="Title of modal">
-      <template #content>
-        Hello guys i am the main content of modal !!
-      </template>
-      <template #ok-btn="scope">
-        <!--
-        scope: {
-            click: () => void;
-            color: NamedColor | undefined;
-            label: string;
-        }
-        -->
-        <q-btn outline color="red" @click="scope.click"> Do anything </q-btn>
-      </template>
-      <template #cancel-btn="scope">
-        <!--
-        scope: {
-            color: NamedColor | undefined;
-            disable: boolean;
-            label: string;
-        }
-        -->
-      </template>
-      <template #close-icon-btn="scope">
-        <!--
-        scope: {
-            color: NamedColor | undefined;
-            disable: boolean;
-        }
-        -->
-      </template>
-
-    </AnModal>
-
-    <q-btn label="open modal" color="primary" @click="modalRef?.show()" />
-  </q-page>
+  <anq-server-select
+    v-model="selectedServer"
+    :servers="servers"
+    @update:model-value="handleServerChange"
+  />
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
-import {AnModal} from 'an-quasar-utils'
+import { ref } from 'vue'
+import { AnServerSelect } from 'anq-server-select'
 
-const modalRef = ref<InstanceType<typeof AnModal>>()
+const selectedServer = ref(null)
+const servers = ref([
+  { id: 1, name: 'Server 1', url: 'https://server1.example.com' },
+  { id: 2, name: 'Server 2', url: 'https://server2.example.com' }
+])
 
-
-</script>
-
-```
-
-### AnModalForm
-
-is the same of AnModal just with support form behavior like form-is-loading and @submit
-
-```
-<template>
-  <q-page class="row items-center justify-evenly">
-
-    <AnModalForm ref="modalFormRef" @submit="onSubmit" :form-is-loading="data.formIsSubmitting">
-      <template #content>
-        <q-input label="Name" v-model="data.form.name" outlined :rules="[(val:string)=>val.trim() ? true : 'This field is required']" />
-      </template>
-    </AnModalForm>
-
-    <q-btn label="open modal form" color="primary" @click="modalFormRef?.show()" />
-  </q-page>
-</template>
-
-<script setup lang="ts">
-import { reactive, ref } from 'vue';
-import { AnModalForm} from 'an-quasar-utils'
-
-const modalFormRef = ref<InstanceType<typeof AnModalForm>>()
-
-const onSubmit = ()=>{
-  data.formIsSubmitting = true
-  Promise.resolve().then(()=>{
-    console.log('operation work succssfuly.');
-  }).catch(()=>{
-    console.log('there is a problem.');
-  }).finally(()=>{
-    data.formIsSubmitting = true
-  })
+const handleServerChange = (server) => {
+  console.log('Selected server:', server)
 }
-
-const data = reactive({
-  form:{
-    name:''
-  },
-  formIsSubmitting:false,
-})
-
 </script>
 ```
 
-### AnPhoneNumberInput
+## Props
 
-A reactive international phone number input force the user to add a real phone numbers with full props/slots access to internal components
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| modelValue | `any` | `null` | The selected server value |
+| servers | `Array` | `[]` | Array of server objects |
+| label | `string` | `'Server'` | Label for the select input |
+| placeholder | `string` | `'Select a server'` | Placeholder text |
+| required | `boolean` | `false` | Whether the field is required |
+| disabled | `boolean` | `false` | Whether the field is disabled |
 
-```
-<template>
-<AnPhoneNumberInput v-model="data.phone" class="gap-3" outlined :country-props="{outlined:true,dense:true,excludeCountries:['US']}" dense >
-  <template #country-select-prepend>
-    <q-icon name="flag" />
-  </template>
-</AnPhoneNumberInput>
-</template>
+## Events
 
-<script>
-import { reactive } from 'vue';
-import { AnPhoneNumberInput } from 'an-quasar-utils'
+| Event | Parameters | Description |
+|-------|------------|-------------|
+| update:model-value | `(value: any)` | Emitted when the selected value changes |
+| validation | `(isValid: boolean)` | Emitted when validation state changes |
 
-const data = reactive({
-  phone:'+21235980022'
-})
+## Development
 
-</script>
-```
+```bash
+# Install dependencies
+npm install
 
-### AnServerSelect
+# Start development server
+npm run dev
 
-An QSelect with live search for simplify server data selection
+# Build for production
+npm run build
 
-```
-<template>
-
-<AnServerSelect link="https://restcountries.com/v3.1/all?fields=name,cca2,idd,flag" v-model="data.country" :option-label="op=>op.name.common" option-value="cca2" emit-value map-options  />
-      {{data.countryCode}}
-
-</template>
-
-<script>
-import { reactive } from 'vue';
-import { AnServerSelect } from 'an-quasar-utils'
-
-const data = reactive({
-  countryCode:null as string | null
-})
-
-</script>
+# Preview production build
+npm run preview
 ```
 
-### AnServerDataTable
+## Contributing
 
-A customizable QTable with live search and intelligent filter modal (using just with a server paginated data)
+Contributions are welcome! Please feel free to submit a Pull Request.
 
-```
-<template>
-  <div class="mx-auto container border-2 border-black p-1">
-    <AnServerDataTable
-      link="http://localhost:8000/products/client/products/"
-      :columns="cols"
-      :link-params="{
-        page_size:1
-      }"
-      :pagination-response-keys="{
-        count:'count',
-        lastPage:'last_page',
-        next:'next',
-        previous:'previous',
-        results:'results',
-      }"
+## License
 
-      title="kkkkk"
-      has-search
-      :filter-modal-data="filterModalData"
-      has-filter
-    >
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-    </AnServerDataTable>
+## Author
 
-  </div>
-</template>
+- Aymane Nahji ([GitHub](https://github.com/AymaneNahji))
 
-<script setup lang="ts">
-import { QTableColumn } from 'quasar';
-import AnServerDataTable, { FilterModalData } from './components/AnServerDataTable.vue';
+## Support
 
-
-
-type Product = {
-  id: number;
-  slug: string;
-  name: string;
-  description: string;
-  origin_price: string;
-  discount_percentage: string;
-  price: number;
-  image: string;
-  avg_rating: number;
-  ratings_count: number;
-  category: number;
-  brand: number|null;
-  has_variants: boolean;
-};
-
-const filterModalData : FilterModalData = {
-        fields:[
-          {
-            label:"Popular domain",
-            type:'checkboxs',
-            urlParam:'products_domain',
-            choices:[
-              {
-                label:'Skinecare',
-                value:"skinecare"
-              },
-              {
-                label:'Gaming',
-                value:"gaming"
-              },
-            ],
-            defaultValue:'gaming'
-          },
-        ],
-      }
-
-const cols: QTableColumn<Product>[] = [
-  {
-    field: 'id',
-    label: 'ID',
-    name: 'id',
-    align: 'left',
-    sortable: true,
-  },
-  {
-    field: 'slug',
-    label: 'Slug',
-    name: 'slug',
-    align: 'left',
-    sortable: true,
-  },
-  {
-    field: 'name',
-    label: 'Name',
-    name: 'name',
-    align: 'left',
-    sortable: true,
-  },
-  {
-    field: 'description',
-    label: 'Description',
-    name: 'description',
-    align: 'left',
-    sortable: false,
-  },
-  {
-    field: 'origin_price',
-    label: 'Original Price',
-    name: 'origin_price',
-    align: 'right',
-    sortable: true,
-  },
-  {
-    field: 'discount_percentage',
-    label: 'Discount %',
-    name: 'discount_percentage',
-    align: 'right',
-    sortable: true,
-  },
-  {
-    field: 'price',
-    label: 'Price',
-    name: 'price',
-    align: 'right',
-    sortable: true,
-  },
-  {
-    field: 'image',
-    label: 'Image',
-    name: 'image',
-    align: 'left',
-    sortable: false,
-  },
-  {
-    field: 'avg_rating',
-    label: 'Avg Rating',
-    name: 'avg_rating',
-    align: 'right',
-    sortable: true,
-  },
-  {
-    field: 'ratings_count',
-    label: 'Ratings Count',
-    name: 'ratings_count',
-    align: 'right',
-    sortable: true,
-  },
-  {
-    field: 'category',
-    label: 'Category',
-    name: 'category',
-    align: 'left',
-    sortable: true,
-  },
-  {
-    field: 'brand',
-    label: 'Brand',
-    name: 'brand',
-    align: 'left',
-    sortable: true,
-  },
-  {
-    field: 'has_variants',
-    label: 'Has Variants',
-    name: 'has_variants',
-    align: 'center',
-    sortable: false,
-  }
-]
-</script>
-```
-
-# Big Note : use TypeScript for descover our utils because there is a lot of props/slots/exposes we can't document them
+If you encounter any issues or have questions, please [open an issue](https://github.com/AymaneNahji/anq-server-select/issues) on GitHub. 

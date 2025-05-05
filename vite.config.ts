@@ -2,6 +2,7 @@ import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import { quasar, transformAssetUrls } from '@quasar/vite-plugin'
 import cssInjectedByJsPlugin from 'vite-plugin-css-injected-by-js';
+import path from 'path'
 
 
 // https://vitejs.dev/config/
@@ -11,15 +12,15 @@ export default defineConfig({
       template: { transformAssetUrls },
     }),
     quasar({
-      sassVariables: './src/quasar-variables.sass',
+      // sassVariables: 'src/quasar-variables.sass',
     }),
     cssInjectedByJsPlugin()
   ],
   build:{
     lib:{
       entry:"./src/index.ts",
-      name:"anUtils",
-      fileName:'an-utils',
+      name:"anqServerSelect",
+      fileName:'anq-server-select',
     },
     rollupOptions: {
       // make sure to externalize deps that shouldn't be bundled
@@ -34,5 +35,10 @@ export default defineConfig({
       },
       
     },
+  },
+  resolve: {
+    alias: {
+      '@': path.resolve(__dirname, './src')
+    }
   }
 })

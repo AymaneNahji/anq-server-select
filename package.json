@@ -1,35 +1,35 @@
 {
-  "name": "an-quasar-utils",
+  "name": "anq-server-select",
   "version": "0.0.17",
+  "description": "A powerful, customizable server select component for Quasar Framework and Vue 3 applications. Features include server selection, validation, and seamless integration with Quasar's design system.",
   "type": "module",
-  "main": "./dist/an-utils.umd.cjs",
+  "main": "./dist/anq-server-select.umd.cjs",
   "types": "./dist/types/index.d.ts",
   "files": [
     "dist"
   ],
-  "module": "./dist/an-utils.js",
+  "module": "./dist/anq-server-select.js",
   "exports": {
     ".": {
-      "import": "./dist/an-utils.js",
-      "require": "./dist/an-utils.umd.cjs",
+      "import": "./dist/anq-server-select.js",
+      "require": "./dist/anq-server-select.umd.cjs",
       "types": "./dist/types/index.d.ts"
     }
   },
   "scripts": {
     "dev": "vite",
-    "build": "vite build && yarn build:types",
+    "build": "vite build && npm run build:types",
     "build:types": "vue-tsc --project tsconfig.build-types.json --declaration --emitDeclarationOnly --outDir dist/types ",
     "preview": "vite preview"
   },
   "dependencies": {
     "axios": "^1.7.7",
-    "countries-list": "^3.1.1",
-    "libphonenumber-js": "^1.11.16",
-    "vue": "^3.4.37"
+    "vue": "^3.0.0"
   },
   "devDependencies": {
     "@quasar/extras": "^1.16.12",
     "@quasar/vite-plugin": "^1.7.0",
+    "@types/node": "^22.15.3",
     "@vitejs/plugin-vue": "^5.1.2",
     "autoprefixer": "^10.4.20",
     "postcss": "^8.4.47",
@@ -40,63 +40,38 @@
     "typescript": "^5.5.3",
     "vite": "^5.4.1",
     "vite-plugin-css-injected-by-js": "^3.5.1",
-    "vue-tsc": "^2.0.29",
-    "@rollup/rollup-win32-x64-msvc": "^4.28.1"
+    "vue-tsc": "^2.0.29"
   },
   "keywords": [
-    "an-quasar-utils",
-    "modal",
-    "form-modal",
-    "table",
-    "data-table",
-    "server-data-table",
-    "server-pagination",
-    "server-filter",
-    "server-table",
-    "server-select",
-    "select-component",
-    "live-search",
-    "searchable-select",
-    "phone-input",
-    "international-phone-input",
-    "phone-number-validation",
-    "phone-number-input",
-    "frontend-components",
-    "quasar",
-    "quasar-framework",
-    "quasar-utils",
-    "quasar-components",
-    "vue",
-    "vue3",
-    "vue-components",
-    "vue-utilities",
-    "typescript",
-    "typescript-utils",
-    "typescript-library",
-    "ui-library",
-    "frontend-utils",
-    "helper-components",
-    "form-validation",
-    "vue-forms",
-    "modal-component",
-    "modal-dialog",
-    "dynamic-forms",
-    "paginated-table",
-    "reactive-forms",
-    "vuejs",
-    "vue-js",
-    "frontend-frameworks",
-    "vue-helpers",
-    "open-source",
-    "npm-package",
-    "frontend-development",
-    "javascript",
-    "npm-utils",
-    "reusable-components"
+    "anq-server-select",
+    "server select",
+    "quasar server select",
+    "vue server select",
+    "quasar framework",
+    "vue 3",
+    "server selection",
+    "server input component",
+    "quasar components",
+    "vue components",
+    "responsive server select",
+    "customizable server select",
+    "typescript server select"
   ],
   "author": "aymane_nahji",
   "repository": {
     "type": "git",
-    "url": "https://github.com/AymaneNahji/an-quasar-utils"
+    "url": "https://github.com/AymaneNahji/anq-server-select"
+  },
+  "bugs": {
+    "url": "https://github.com/AymaneNahji/anq-server-select/issues"
+  },
+  "homepage": "https://github.com/AymaneNahji/anq-server-select#readme",
+  "license": "MIT",
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "peerDependencies": {
+    "quasar": "^2.0.0",
+    "vue": "^3.0.0"
   }
 }
