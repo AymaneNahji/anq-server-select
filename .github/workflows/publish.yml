@@ -19,7 +19,7 @@ jobs:
           registry-url: https://registry.npmjs.org/
 
       - name: Installer les dépendances
-        run: npm install --legacy-peer-deps
+        run: rm -rf node_modules package-lock.json && npm install --legacy-peer-deps
 
       - name: Construire le projet (optionnel)
         run: npm run build
