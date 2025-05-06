@@ -1,6 +1,6 @@
 <template>
   <div class="p-5">
-    <AnServerSelect
+    <AnqServerSelect
       v-model="selectedCountry"
       label="Select Country"
       link="https://restcountries.com/v3.1/all?fields=name,cca2,idd,flag"
@@ -16,13 +16,13 @@
           <span>{{ opt.name }}</span>
         </div>
       </template> -->
-    </AnServerSelect>
+    </AnqServerSelect>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref } from 'vue';
-import AnServerSelect from './components/AnServerSelect.vue';
+import AnqServerSelect from './components/AnqServerSelect.vue';
 
 const selectedCountry = ref(null);
 

@@ -1,6 +1,6 @@
 {
   "name": "anq-server-select",
-  "version": "0.0.17",
+  "version": "0.0.18",
   "description": "A powerful, customizable server select component for Quasar Framework and Vue 3 applications. Features include server selection, validation, and seamless integration with Quasar's design system.",
   "type": "module",
   "main": "./dist/anq-server-select.umd.cjs",

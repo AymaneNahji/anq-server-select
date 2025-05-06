@@ -39,7 +39,7 @@ yarn add anq-quasar-server-select
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import { AnServerSelect } from 'anq-server-select'
+import { AnqServerSelect } from 'anq-server-select'
 
 const selectedServer = ref(null)
 const servers = ref([

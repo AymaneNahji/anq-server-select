@@ -1,7 +1,7 @@
 import './assets/tailwind.css';  // Ensure this path is correct
 
-import AnServerSelect from './components/AnServerSelect.vue'
+import AnqServerSelect from './components/AnqServerSelect.vue'
 
 export {
-    AnServerSelect
+    AnqServerSelect
 }
