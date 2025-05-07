@@ -4,7 +4,7 @@
       v-model="selectedCountry"
       label="Select Country"
       link="https://restcountries.com/v3.1/all?fields=name,cca2,idd,flag"
-      :defaultOptions="countries"
+      :defaultOptions="[]"
       @filter="onFilter"
       @loading="onLoading"
       @error="onError"
